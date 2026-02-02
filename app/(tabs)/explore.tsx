@@ -191,7 +191,7 @@ export default function ArenaScreen() {
       setResultado(`¡VICTORIA PARA ${pokemonA.name.toUpperCase()}!`);
     else if (ventajaB > ventajaA)
       setResultado(`¡VICTORIA PARA ${pokemonB.name.toUpperCase()}!`);
-    else setResultado("¡EMPATE TÉCNICO!");
+    else setResultado("¡EMPATE!");
   };
 
   const renderSearch = (
