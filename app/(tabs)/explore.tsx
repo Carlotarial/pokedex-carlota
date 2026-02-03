@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface PokemonSimple {
   id: number;
   name: string;
-  type: string;
+  types: string[];
   image: string;
   hp: number;
 }
@@ -163,10 +163,10 @@ export default function ArenaScreen() {
   const seleccionar = async (name: string, side: "A" | "B") => {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
     const data = await res.json();
-    const pData = {
+    const pData: PokemonSimple = {
       id: data.id,
       name: data.name,
-      type: data.types[0].type.name,
+      types: data.types.map((t: any) => t.type.name),
       image:
         data.sprites.other["official-artwork"].front_default ||
         data.sprites.front_default,
@@ -182,10 +182,26 @@ export default function ArenaScreen() {
     setResultado("");
   };
 
+  const getEfectividad = (tiposAtacante: string[], tiposDefensor: string[]) => {
+    let maxEfectividad = 0;
+
+    tiposAtacante.forEach((tipoA) => {
+      let efectividadTipo = 1;
+      tiposDefensor.forEach((tipoD) => {
+        const multiplicador = TABLA_TIPOS[tipoA]?.[tipoD] ?? 1;
+        efectividadTipo *= multiplicador;
+      });
+      if (efectividadTipo > maxEfectividad) maxEfectividad = efectividadTipo;
+    });
+
+    return maxEfectividad;
+  };
+
   const combatir = () => {
     if (!pokemonA || !pokemonB) return;
-    const ventajaA = TABLA_TIPOS[pokemonA.type]?.[pokemonB.type] || 1;
-    const ventajaB = TABLA_TIPOS[pokemonB.type]?.[pokemonA.type] || 1;
+
+    const ventajaA = getEfectividad(pokemonA.types, pokemonB.types);
+    const ventajaB = getEfectividad(pokemonB.types, pokemonA.types);
 
     if (ventajaA > ventajaB)
       setResultado(`¡VICTORIA PARA ${pokemonA.name.toUpperCase()}!`);
@@ -246,7 +262,7 @@ export default function ArenaScreen() {
                   <View style={[styles.hpBarFill, { width: "100%" }]} />
                 </View>
                 <Text style={styles.typeText}>
-                  {pokemonA.type.toUpperCase()}
+                  {pokemonA.types.join(" / ").toUpperCase()}
                 </Text>
               </View>
               <Image
@@ -277,7 +293,7 @@ export default function ArenaScreen() {
                   />
                 </View>
                 <Text style={styles.typeText}>
-                  {pokemonB.type.toUpperCase()}
+                  {pokemonB.types.join(" / ").toUpperCase()}
                 </Text>
               </View>
             </View>
