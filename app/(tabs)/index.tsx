@@ -32,7 +32,7 @@ export default function HomeScreen() {
 
       <View style={styles.screenOuterFrame}>
         <View style={styles.screenInnerFrame}>
-          <Text style={styles.welcomeText}>SISTEMA POKÉDEX v2.0</Text>
+          <Text style={styles.welcomeText}>SISTEMA POKÉDEX</Text>
           <Text style={styles.subText}>ENCUENTRA AQUÍ TODA LA INFORMACIÓN</Text>
           <View style={styles.scanLine} />
         </View>
